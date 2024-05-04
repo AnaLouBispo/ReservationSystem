@@ -9,34 +9,108 @@ import Model.Reservation;
 public class Controller {
 
     HashSet<Reservation> listasDeReservas = new HashSet<>();
-
     Scanner sc = new Scanner(System.in);
 
     public void createReservation() {
-        System.out.println("Nome do Restaurante: ");
+        System.out.print("Nome do Restaurante: ");
         String nomeRestaurante = sc.next();
 
-        System.out.println("Especialidades do restaurante: ");
+        System.out.print("Especialidades do restaurante: ");
         String especialidades = sc.next();
 
-        System.out.println("Nome do Titular da Reserva: ");
+        System.out.print("Nome do Titular da Reserva: ");
         String nomeCliente = sc.next();
 
-        System.out.println("Número de Pessoas: ");
-        int numeroDeClientes = sc.nextInt();
+        int numeroDeClientes = 0;
 
-        System.out.println("Hora: ");
-        int hora = sc.nextInt();
+        do {
+            System.out.print("Número de Pessoas: ");
+            try {
+                numeroDeClientes = sc.nextInt();
+                if (numeroDeClientes > 8) {
+                    System.out.println("Limite de Pessoas atingido :(");
+                } else {
+                    break;
+                }
+            } catch (Exception e) {
+                System.out.println("Valor inválido. Por favor, digite um número inteiro.");
+                sc.next();
+            }
+        } while (true);
 
-        System.out.println("Minutos: ");
-        int min = sc.nextInt();
+        int hora = 0;
+
+        do {
+            System.out.print("Hora: ");
+            try {
+                hora = sc.nextInt();
+                if (hora < 00 || hora > 23) {
+                    System.out.println("Horário inválido. Digite um número entre 00 e 23.");
+                } else {
+                    break;
+                }
+            } catch (Exception e) {
+                System.out.println("Valor inválido. Por favor, digite um número inteiro.");
+                sc.next();
+            }
+
+        } while (true);
+
+        int min = 0;
+
+        do {
+            System.out.print("Minutos: ");
+            try {
+                min = sc.nextInt();
+                if (min > 59) {
+                    System.out.println("Horário Inválido");
+                } else {
+                    break;
+                }
+
+            } catch (Exception e) {
+                System.out.println("Valor inválido. Por favor, digite um número inteiro.");
+                sc.next();
+
+            }
+        } while (true);
+
+        int mes = 0;
+
+        do {
+            System.out.print("Mês: ");
+            try {
+                mes = sc.nextInt();
+                if (mes > 12 || mes < 1) {
+                    System.out.println("Mês Inválido :(");
+                } else {
+                    break;
+                }
+
+            } catch (Exception e) {
+                System.out.println("Valor inválido. Por favor, digite um número inteiro.");
+                sc.next();
+            }
+        } while (true);
+
+        int dia = 0;
+
+        do {
+            System.out.print("Dia: ");
+            try {
+                dia = sc.nextInt();
+                if (dia < 1 || dia > 31) {
+                    System.out.println("Data Inválida");
+                } else {
+                    break;
+                }
+            } catch (Exception e) {
+                System.out.println("Valor inválido. Por favor, digite um número inteiro.");
+                sc.next();
+            }
+        } while (true);
 
         LocalTime horario = LocalTime.of(hora, min);
-
-        System.out.println("Mês: ");
-        int mes = sc.nextInt();
-        System.out.println("Dia: ");
-        int dia = sc.nextInt();
         LocalDate date = LocalDate.of(2024, mes, dia);
 
         int disponibilidadeDeReserva = 50;
@@ -45,7 +119,6 @@ public class Controller {
         Reservation reserva = new Reservation(nomeRestaurante, especialidades, disponibilidadeDeReserva, nomeCliente,
                 numeroDeClientes, horario, date, id);
         listasDeReservas.add(reserva);
-
     }
 
     public Long getNextId() {
@@ -53,44 +126,38 @@ public class Controller {
         for (Reservation reserva : listasDeReservas) {
             long id = reserva.getId();
             if (id > maxId) {
-
                 maxId = id;
             }
-
         }
         return maxId + 1;
     }
 
     public void listarReservas() {
-
         if (listasDeReservas.isEmpty()) {
             System.out.println("Nenhuma reserva criada :/");
         } else {
-            System.out.println("Listando Reservas :> ");
+            System.out.print("Listando Reservas :> ");
             for (Reservation reserva : listasDeReservas) {
-                System.out.println("Id: " + reserva.getId() + "\n" + "Titular da reserva: " + reserva.getNomeCliente()
+                System.out.print("Id: " + reserva.getId() + "\n" + "Titular da reserva: " + reserva.getNomeCliente()
                         + "\n" + "Dia: " + reserva.getDia() + "\n" + "Horário: " + reserva.getHorario() + "\n"
                         + "Número de pessoas: " + reserva.getNumeroDeClientes());
             }
         }
-
     }
 
-  
     public void deletarVaga() {
-    	  System.out.println("Id da reserva? ");
-    	  Long id = sc.nextLong();
+        System.out.print("Id da reserva? ");
+        Long id = sc.nextLong();
 
         if (listasDeReservas.removeIf(reserva -> reserva.getId() == id)) {
             System.out.println("Reserva Deletada >_<");
         } else {
             System.out.println("Erro ao deletar reserva");
         }
-
     }
 
     public void update() {
-        System.out.println("Qual ID da reserva que deseja editar? ");
+        System.out.print("Qual ID da reserva que deseja editar? ");
 
         Long id = sc.nextLong();
         int hora;
@@ -100,41 +167,111 @@ public class Controller {
         int numeroDePessoas;
         String restaurante;
         String nomeTit;
+        String especialidades;
 
+        if(listasDeReservas.isEmpty()) {
+            System.out.println("Não ha nenhuma reserva feita : (");
+        }
         for (Reservation reserva : listasDeReservas) {
-            if (id.equals(reserva.getId())) {
-                System.out.println("Dia: ");
-                dia = sc.nextInt();
-                System.out.println("Mês");
-                mes = sc.nextInt();
-                LocalDate date = LocalDate.of(2024, mes, dia);
-
-                reserva.setDia(date);
-
-                System.out.println("Hora: ");
-                hora = sc.nextInt();
-
-                System.out.println("Minutos: ");
-                minuto = sc.nextInt();
-
-                LocalTime horario = LocalTime.of(hora, minuto);
-                reserva.setHorario(horario);
-
-                System.out.println("Quantidade de Pessoas: ");
-                numeroDePessoas = sc.nextInt();
-                reserva.setNumeroDeClientes(numeroDePessoas);
-
-                System.out.println("Restaurante: ");
+            if (id == reserva.getId()) {
+                System.out.print("Nome do Restaurante: ");
                 restaurante = sc.next();
                 reserva.setNomeRestaurante(restaurante);
 
-                System.out.println("Nome do Titular: ");
+                System.out.print("Especialidades do restaurante: ");
+                especialidades = sc.next();
+                reserva.setEspecialidades(especialidades);
+                System.out.print("Nome do Titular da Reserva: ");
                 nomeTit = sc.next();
                 reserva.setNomeCliente(nomeTit);
+                do {
+                    System.out.print("Número de Pessoas: ");
+                    try {
+                        numeroDePessoas = sc.nextInt();
+                        if (numeroDePessoas > 8) {
+                            System.out.println("Limite de Pessoas atingido :(");
+                        } else {
+                            break;
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Valor inválido. Por favor, digite um número inteiro.");
+                        sc.next();
+                    }
+                } while (true);
+                reserva.setNumeroDeClientes(numeroDePessoas);
 
+                do {
+                    System.out.print("Hora: ");
+                    try {
+                        hora = sc.nextInt();
+                        if (hora < 00 || hora > 23) {
+                            System.out.println("Horário inválido. Digite um número entre 00 e 23.");
+                        } else {
+                            break;
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Valor inválido. Por favor, digite um número inteiro.");
+                        sc.next();
+                    }
+                } while (true);
+
+                do {
+                    System.out.print("Minutos: ");
+                    try {
+                        minuto = sc.nextInt();
+                        if (minuto > 59) {
+                            System.out.println("Horário Inválido");
+                        } else {
+                            break;
+                        }
+
+                    } catch (Exception e) {
+                        System.out.println("Valor inválido. Por favor, digite um número inteiro.");
+                        sc.next();
+
+                    }
+                } while (true);
+
+                do {
+                    System.out.print("Mês: ");
+                    try {
+                        mes = sc.nextInt();
+                        if (mes > 12 || mes < 1) {
+                            System.out.println("Mês Inválido :(");
+                        } else {
+                            break;
+                        }
+
+                    } catch (Exception e) {
+                        System.out.println("Valor inválido. Por favor, digite um número inteiro.");
+                        sc.next();
+                    }
+                } while (true);
+
+                do {
+                    System.out.print("Dia: ");
+                    try {
+                        dia = sc.nextInt();
+                        if (dia < 1 || dia > 31) {
+                            System.out.println("Data Inválida");
+                        } else {
+                            break;
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Valor inválido. Por favor, digite um número inteiro.");
+                        sc.next();
+                    }
+                } while (true);
+
+                LocalTime horario = LocalTime.of(hora, minuto);
+                reserva.setHorario(horario);
+                LocalDate date = LocalDate.of(2024, mes, dia);
+                reserva.setDia(date);
+
+            } else {
+                System.out.println("Não há nenhuma reserva com esse id (╯_╰) ");
             }
         }
 
     }
-
 }
